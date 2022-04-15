@@ -2,12 +2,12 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-src_file = "cuprite_dem.npy"
-# src_file = "cuprite_slope.npy"
+src_file = "cuprite_dem.npy"  # Get from the Drive folder
+
 data = np.load(src_file)
 data = data[:, :, 0]  # Get rid of that pesky last dimension
 
-def shadowTrace(map, sun_angle = np.deg2rad(-45), sun_direction = "+X", map_size = 1000):
+def shadowTrace(map, sun_angle = np.deg2rad(45), sun_direction = "+X", map_size = 1000):
     """
           Simulates a sun location and generates shade from the elevation map.
         This takes an angle to the sun and rotates the elevation map accordingly.
@@ -52,7 +52,7 @@ def shadowTrace(map, sun_angle = np.deg2rad(-45), sun_direction = "+X", map_size
 
 
     # Determine how much to increase each pixels height by based off of the sun's position
-    height_offset_per_row = dist_from_far_edge * np.tan(sun_angle) 
+    height_offset_per_row = dist_from_far_edge * np.tan(-sun_angle)  # Negative to rotate everything the correct direction
 
     # Update each pixel of the elevation map
     if (sun_direction == "+X") or (sun_direction == "-X"):
@@ -62,7 +62,8 @@ def shadowTrace(map, sun_angle = np.deg2rad(-45), sun_direction = "+X", map_size
 
     shadeMap = np.zeros(elevMap.shape)
     for u in range(L):
-        print("{} out of {}".format(u, L))
+        if (u % 50 == 0):
+            print("{} out of {}".format(u, L))
         for v in range(W):
 
             # Check if each cell is the largest in the remainder of the row
