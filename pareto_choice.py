@@ -1,16 +1,20 @@
 import numpy as np
 
-# returns the Pareto optimal choice from a list of rewards
-def pareto_choice(rewards_list):
-    best_set = rewards_list[0]
-    for i in range(len(rewards_list)):
-        if np.all(rewards_list[i] >= best_set):
-            best_set = rewards_list[i]
-    return best_set
+
+def pareto_choices(costs):
+    """
+    Find the pareto-efficient points
+    :param costs: An (n_points, n_costs) array
+    :return: A (n_points, ) boolean array, indicating whether each point is Pareto efficient
+    """
+    is_efficient = np.ones(costs.shape[0], dtype = bool)
+    for i, c in enumerate(costs):
+        is_efficient[i] = np.all(np.any(costs[:i]>c, axis=1)) and np.all(np.any(costs[i+1:]>c, axis=1))
+    return is_efficient
 
 # test
-rewards = []
-rewards.append(np.array([1, 2, 2]))
-rewards.append(np.array([1, 3, 2]))
-rewards.append(np.array([6, 2, 2]))
-print(pareto_choice(rewards))
+costs = np.array([[1, 2, 2],
+                  [2, 2, 0],
+                  [1, 3, 2],
+                  [6, 2, 2]])
+print(pareto_choices(costs))
