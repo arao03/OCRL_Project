@@ -29,7 +29,7 @@ class PathGeneratorStraight(PathGenerator):
             dist = 1000
             heading = -1000
             count = 0
-            while dist > 30:
+            while dist > 40:
                 nextPoint = map.getRandomPoint()
                 dist = ((point[0] - nextPoint[0]) ** 2 + (point[1] - nextPoint[1]) ** 2) ** 0.5
                 heading = math.atan2(-(nextPoint[1]-point[1]), nextPoint[0] - point[0])

@@ -143,11 +143,14 @@ def displayPathsonProbability(next, live):
     (a,i,j,k,l,o) = next
     fig, (ax1, ax2, ax3) = plt.subplots(1,3)
     ax1.set_aspect('equal')
-    ax1.imshow(a.maps[0]._distribution, cmap='plasma', interpolation='nearest')
+    ax1.imshow(a.maps[0]._distribution, interpolation='nearest')
     ax2.set_aspect('equal')
-    ax2.imshow(a.maps[1]._distribution, cmap='plasma', interpolation='nearest')
+    ax2.imshow(a.maps[1]._distribution, interpolation='nearest')
     ax3.set_aspect('equal')
-    ax3.imshow(a.maps[2]._distribution, cmap='plasma', interpolation='nearest')
+    ax3.imshow(a.maps[2]._distribution, interpolation='nearest')
+    ax1.title.set_text('Entropy')
+    ax2.title.set_text('Shade')
+    ax3.title.set_text('Risk')
 
     s = np.loadtxt("data.txt")
     points = [[]]
@@ -162,11 +165,14 @@ def displayPathsonProbability(next, live):
     displaypoints = [[[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]]]
     for pointlist in points:
         ax1.clear()
-        ax1.imshow(a.maps[0]._distribution, cmap='plasma', interpolation='nearest')
+        ax1.imshow(a.maps[0]._distribution, interpolation='nearest')
         ax2.clear()
-        ax2.imshow(a.maps[1]._distribution, cmap='plasma', interpolation='nearest')
+        ax2.imshow(a.maps[1]._distribution, interpolation='nearest')
         ax3.clear()
-        ax3.imshow(a.maps[2]._distribution, cmap='plasma', interpolation='nearest')
+        ax3.imshow(a.maps[2]._distribution, interpolation='nearest')
+        ax1.title.set_text('Entropy')
+        ax2.title.set_text('Shade')
+        ax3.title.set_text('Risk')
         for i in range(0,len(pointlist), 2):
             displaypoints[i//2][0].append(pointlist[i])
             displaypoints[i//2][1].append(pointlist[i+1])
@@ -174,6 +180,9 @@ def displayPathsonProbability(next, live):
             ax1.plot(displaypoints[i][0], displaypoints[i][1], 'r', linewidth=1)
             ax2.plot(displaypoints[i][0], displaypoints[i][1], 'r', linewidth=1)
             ax3.plot(displaypoints[i][0], displaypoints[i][1], 'r', linewidth=1)
+            ax1.title.set_text('Entropy')
+            ax2.title.set_text('Shade')
+            ax3.title.set_text('Risk')
             if len(displaypoints[i][0]) > 0:
                 circ1 = Circle((displaypoints[i][0][-1],displaypoints[i][1][-1]),1,ec='red',fc='red')
                 circ2 = Circle((displaypoints[i][0][-1], displaypoints[i][1][-1]), 1, ec='red', fc='red')

@@ -175,103 +175,14 @@ class PrimitivePathPlanner():
             paretoNum = 1
         idx = random.randrange(paretoNum)
 
+        #print(allCosts[idx])
+
         chosenPath = allPaths[idx]
 
         bestSplitMapPaths[splitMapIndex] = chosenPath
 
         return np.array(bestSplitMapPaths)
 
-        '''if minErg < 0 or erg < minErg:
-                minErg = erg
-                bestSplitMapPaths[splitMapIndex] = np.array(paths)
-            
-        return np.array(bestSplitMapPaths)
-        '''
-        
-        """bestSplitMapPaths = [[],[],[]]
-        originalMap = Map(map.sizeX,map.sizeY,map.dX,map.dY,50,map._distribution)
-        lowestx, lowesty = map.getWorldSize()
-        highestx = 0
-        highesty = 0
-        for splitMapIndex in range(len(splitMapAgents)):
-            minErg = -1
-            agentList = splitMapAgents[splitMapIndex]
-            for trial in range(tries * len(agentList)):
-                map = Map(originalMap.sizeX, originalMap.sizeY, originalMap.dX, originalMap.dY, 50, originalMap._distribution)
-                
-                for n in range(10):
-                    paths = []
-                    for i in range(len(agentList)):
-                        currentAgent = agentList[i]
-                        generator = self._generators[currentAgent.generatorIndex]
-                        inBounds = False
-                        count = 0
-                        path = PathPrimitive([])
-                        while inBounds == False:
-                            count += 1
-                            if (count%1000 == 0):
-                                map = Map(originalMap.sizeX, originalMap.sizeY, originalMap.dX, originalMap.dY, 50, originalMap._distribution)
-                            (path, inBounds) = generator.generateRandomPrimitivePath(map, currentAgent)
-
-                        paths.append(path)
-                    infoMap = self.generateInfoMapFromPrimitivePaths(originalMap, 5, agentList, paths)
-                    erg = mathlib.calcErgodicity(originalMap, infoMap, splitMapIndex, 15)
-                    if minErg < 0 or erg < minErg:
-                        minErg = erg
-                        bestSplitMapPaths[splitMapIndex] = np.array(paths)
-                    lowestx, lowesty = map.getWorldSize()
-                    highestx = 0
-                    highesty = 0
-                    for path in paths:
-                        for x in range(int(path.getTotalTime())):
-                            (currentx, currenty) = path.getPointAtTime(float(x))
-                            (currentx, currenty) = map.mapToWorld(currentx, currenty)
-                            if currentx > highestx:
-                                highestx = currentx
-                            if currentx < lowestx:
-                                lowestx = currentx
-                            if currenty > highesty:
-                                highesty = currenty
-                            if currenty < lowesty:
-                                lowesty = currenty
-
-                    lowestx, lowesty = map.worldToMap(lowestx, lowesty)
-                    highestx, highesty = map.worldToMap(highestx, highesty)
-               
-                    if (len(map._distribution) <= highesty) or (len(map._distribution[0]) <= highestx):
-                        map = Map(originalMap.sizeX, originalMap.sizeY, originalMap.dX, originalMap.dY, 50, originalMap._distribution)
-                    else:
-                        #Map stays unchanged if either dimension of new map is 0
-                        if (len(originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)]) == 0):
-                            map = Map(map.sizeX, map.sizeY, map.dX, map.dY, 50, map._distribution)
-                        elif (len(originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)][0]) == 0):
-                            map = Map(map.sizeX, map.sizeY, map.dX, map.dY, 50, map._distribution)
-                   
-                        #Map stays unchanged if sum of probabilities in new map is 0.0
-                        elif (originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)].sum() == 0.0):
-                         map = Map(map.sizeX, map.sizeY, map.dX, map.dY, 50, map._distribution)
-                    
-                        #Map stays unchanged if new map dimensions is less than 5x5
-                        elif ((len(originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)]) * len(originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)][0])) < 25):
-                            map = Map(map.sizeX, map.sizeY, map.dX, map.dY, 50, map._distribution)
-                    
-                        elif (originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)].sum() == 1.0):
-                            for i in range(len(originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)])):
-                                if (originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)][i].sum() == 1.0):
-                                    map = Map(originalMap.sizeX, originalMap.sizeY, originalMap.dX, originalMap.dY, 50, originalMap._distribution)
-                        # Map stays unchanged if only one value in new map is non-zero
-                        else:
-                            flag = 0
-                            for i in range(len(originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)])):
-                                if (originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)][i].sum() == 0.0):
-                                    flag += 1
-
-                            if flag >= (len(originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)]) - 3):
-                                map = Map(originalMap.sizeX, originalMap.sizeY, originalMap.dX, originalMap.dY, 50, originalMap._distribution)
-                            else:
-                                map = Map(abs(int(highestx)-int(lowestx)), abs(int(highesty)-int(lowesty)), map.dX, map.dY, 50, originalMap._distribution[int(lowesty):int(highesty), int(lowestx):int(highestx)])
-        return np.array(bestSplitMapPaths)
-        """
 
 
 

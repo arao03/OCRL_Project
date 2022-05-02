@@ -38,13 +38,13 @@ def run_threads(start_map, stop_map, num_threads):
         #else:
         #    m = Map(100, 100, 1, 1, 50, np.loadtxt("saved data maps/rand" + str(i - 12)+".txt")[:100])
         #import maps
-    #m1 = Map(100, 100, 1, 1, 50, np.loadtxt("saved data maps/Rand8.txt")[:100])
+    #m1 = Map(100, 100, 1, 1, 50, np.loadtxt("saved data maps/notrand1.txt")[:100])
     #m2 = Map(100, 100, 1, 1, 50, np.loadtxt("saved data maps/Rand9.txt")[:100])
     entropy = np.loadtxt("../data/new_entropy_upsampled.txt")[:200]
     m1 = Map(200, 200, 1, 1, 50, entropy)
     m2 = Map(200, 200, 1, 1, 50, np.loadtxt("../data/new_shade_map.txt")[:200])
     m3 = Map(200, 200, 1, 1, 50, np.loadtxt("../data/new_risk_map.txt")[:200])
-    path_time, no_samples, replan_ratio = 50, 15, 0.5
+    path_time, no_samples, replan_ratio = 50, 25, 0.5
     generator = PathGeneratorStraight(path_time)
     #generator = PathGeneratorSmooth(0.95, (1, 5), (8, 16), path_time)
     testPlanner = PrimitivePathPlanner(replan_ratio * path_time, no_samples, [generator],[m1,m2,m3],3)  # replanTime, tries, generators, initialMaps
@@ -53,48 +53,7 @@ def run_threads(start_map, stop_map, num_threads):
     testPlanner.registerNewAgent(agent)
     agent.generatorIndex = 0
     agent.mapSplitIndex = 0
-    '''for j in range(1): #10 sets of targets
-            dk = []
-            for ll in range (1):
-                dk.append(m.getRandomPoint())
-            for k in range(1): # 3 sets of agent setup
-                for l in range(1): # 20 trials per setup
-                    for o in range(1): # split map or not
-                        path_time, no_samples, replan_ratio = 50, 15, 0.5
-                        generator = PathGeneratorSmooth(0.2, (1, 5), (8, 12), path_time) # straightChance, pathLengthRange, radiusRange, pathTime
-                        #generator = PathGeneratorSmooth(0.2, (1, 10), (15, 25), path_time) # WIDE # straightChance, pathLengthRange, radiusRange, pathTime
-                        generator2 = PathGeneratorStraight(path_time)
-                        testPlanner = PrimitivePathPlanner(replan_ratio * path_time, no_samples, [generator,generator2], m) # replanTime, tries, generators, initialMap
-                        testEntityManager = EntityManager()
 
-                        for ii in range(1):  # setting each agent
-                            agent = testEntityManager.spawnEntity(Agent, (50, 50), 0)
-                            testPlanner.registerNewAgent(agent)
-                            if ii < 5 : # <7 for primitive-spot_omni-details, <3
-                                agent.mapSplitIndex = 2 #1, 2
-                            else :
-                                agent.mapSplitIndex = 1 #2, 1
-                            if k == 0 :
-                                if ii < 2 :
-                                    agent.generatorIndex = 0
-                                else :
-                                    agent.generatorIndex = 1
-                            elif k == 1 :
-                                if ii < 5 :
-                                    agent.generatorIndex = 0
-                                else :
-                                    agent.generatorIndex = 1
-                            elif k == 2 :
-                                if ii < 8 :
-                                    agent.generatorIndex = 0
-                                else :
-                                    agent.generatorIndex = 1
-                            if o == 0 :
-                                agent.mapSplitIndex = 0
-
-                        for jj in range(1): # putting targets into entitymanager
-                            e = testEntityManager.spawnEntity(EntityTarget, dk[jj], 0)
-                            '''
     taskList.append((SimulationData([m1,m2,m3], testPlanner, testEntityManager),0,0,0,0,0))
     random.shuffle(taskList)
     print('OK')
