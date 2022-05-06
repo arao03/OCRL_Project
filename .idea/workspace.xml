@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="984a1c80-8e99-43c0-9d5d-14858a26c530" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/overlord.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/overlord.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pathprimitiveplanner.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/pathprimitiveplanner.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -50,10 +49,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="overlord.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="overlord.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/overlord.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="122">
+            <state relative-caret-position="264">
               <caret line="59" column="5" selection-start-line="59" selection-start-column="5" selection-end-line="59" selection-end-column="5" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
@@ -74,11 +73,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pathprimitiveplanner.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="pathprimitiveplanner.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/pathprimitiveplanner.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="282">
-              <caret line="137" column="21" selection-start-line="137" selection-start-column="21" selection-end-line="137" selection-end-column="21" />
+            <state relative-caret-position="179">
+              <caret line="140" column="25" selection-start-line="140" selection-start-column="25" selection-end-line="140" selection-end-column="25" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -132,8 +131,8 @@
         <option value="$PROJECT_DIR$/src/pathgeneratorstraight.py" />
         <option value="$PROJECT_DIR$/src/plot.py" />
         <option value="$PROJECT_DIR$/src/main.py" />
-        <option value="$PROJECT_DIR$/src/pathprimitiveplanner.py" />
         <option value="$PROJECT_DIR$/src/overlord.py" />
+        <option value="$PROJECT_DIR$/src/pathprimitiveplanner.py" />
       </list>
     </option>
   </component>
@@ -229,7 +228,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/overlord.py</url>
+          <line>50</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="2" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -370,22 +376,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/pathprimitiveplanner.py">
+    <entry file="file://$PROJECT_DIR$/src/overlord.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="137" column="21" selection-start-line="137" selection-start-column="21" selection-end-line="137" selection-end-column="21" />
+        <state relative-caret-position="264">
+          <caret line="59" column="5" selection-start-line="59" selection-start-column="5" selection-end-line="59" selection-end-column="5" />
           <folding>
-            <element signature="e#0#15#0" expanded="true" />
+            <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/overlord.py">
+    <entry file="file://$PROJECT_DIR$/src/pathprimitiveplanner.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
-          <caret line="59" column="5" selection-start-line="59" selection-start-column="5" selection-end-line="59" selection-end-column="5" />
+        <state relative-caret-position="179">
+          <caret line="140" column="25" selection-start-line="140" selection-start-column="25" selection-end-line="140" selection-end-column="25" />
           <folding>
-            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>

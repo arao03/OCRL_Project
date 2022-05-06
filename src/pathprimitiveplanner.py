@@ -138,6 +138,7 @@ class PrimitivePathPlanner():
         allPaths = []
         agentList = splitMapAgents[0]
         allCosts = []
+        splitMapIndex = 0
         print(tries*len(agentList))
         for trial in range(tries * len(agentList)):
             paths = []
