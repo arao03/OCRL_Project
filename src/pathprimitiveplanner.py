@@ -135,11 +135,7 @@ class PrimitivePathPlanner():
         '''
 
 
-        bestSplitMapPaths = [[],[],[]]
         allPaths = []
-        #for splitMapIndex in range(len(splitMapAgents)):
-        minErg = -1
-        splitMapIndex = 0
         agentList = splitMapAgents[0]
         allCosts = []
         print(tries*len(agentList))
@@ -171,20 +167,14 @@ class PrimitivePathPlanner():
 
         pareto = self.pareto_choices(allCosts)
 
-        #print(np.where(pareto)[0])
-
         paretoNum = len(np.where(pareto)[0])
         if paretoNum == 0:
             paretoNum = 1
         idx = random.randrange(paretoNum)
 
-        #print(allCosts[idx])
-
         chosenPath = allPaths[idx]
 
-        bestSplitMapPaths[splitMapIndex] = chosenPath
-
-        return np.array([chosenPath])#(bestSplitMapPaths)
+        return np.array([chosenPath])
 
 
 
