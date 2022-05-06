@@ -156,9 +156,12 @@ class PrimitivePathPlanner():
                     paths.append(path)
 
                 infoMap = self.generateInfoMapFromPrimitivePaths(self.initialMaps[m], 5, agentList, paths)
-                erg = mathlib.calcErgodicity(maps[m], infoMap, splitMapIndex, 15)
+                if m == 2:
+                    cost = mathlib.calcBinary(maps[m], paths, infoMap)
+                else:
+                    cost = mathlib.calcErgodicity(maps[m], infoMap, splitMapIndex, 15)
 
-                costs.append(erg)
+                costs.append(cost)
 
             allPaths.append(paths)
             allCosts.append(costs)

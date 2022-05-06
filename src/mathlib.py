@@ -2,6 +2,19 @@ import numpy as np
 import math
 import random
 
+def calcBinary(infoMap, paths, pathDistrib):
+    for path in paths:
+        '''timeLeft = path.getTotalTime()
+        while timeLeft > 0:
+            (x, y) = path.getPointAtTime(timeLeft)
+            if infoMap.getDistribution()[int(x),int(y)] < 0.5e-5:
+                return 100.0
+            timeLeft = timeLeft - timeLeft/10
+        '''
+        (x, y) = path.getPointAtTime(path.getTotalTime())
+        if infoMap.getDistribution()[int(x), int(y)] < 8e-4:
+            return 10.0
+    return calcErgodicity(infoMap, pathDistrib)
 
 def calcErgodicity(infoMap, pathDistrib, splitMapMode=0, precision=15 ):
     ''' returns the ergodicity of the pathDistrib in relation to the infoMap

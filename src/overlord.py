@@ -44,9 +44,10 @@ def run_threads(start_map, stop_map, num_threads):
     m1 = Map(200, 200, 1, 1, 50, entropy)
     m2 = Map(200, 200, 1, 1, 50, np.loadtxt("../data/new_shade_map.txt")[:200])
     m3 = Map(200, 200, 1, 1, 50, np.loadtxt("../data/new_risk_map.txt")[:200])
-    path_time, no_samples, replan_ratio = 50, 25, 0.5
-    generator = PathGeneratorStraight(path_time)
-    #generator = PathGeneratorSmooth(0.95, (1, 5), (8, 16), path_time)
+    print(m3._distribution)
+    path_time, no_samples, replan_ratio = 100, 25, 0.5
+    #generator = PathGeneratorStraight(path_time)
+    generator = PathGeneratorSmooth(0.9, (1, 3), (8, 10), path_time)
     testPlanner = PrimitivePathPlanner(replan_ratio * path_time, no_samples, [generator],[m1,m2,m3],3)  # replanTime, tries, generators, initialMaps
     testEntityManager = EntityManager()
     agent = testEntityManager.spawnEntity(Agent, (100, 100), 0)

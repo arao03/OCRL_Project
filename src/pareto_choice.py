@@ -9,7 +9,7 @@ def pareto_choices(costs):
     """
     is_efficient = np.ones(costs.shape[0], dtype = bool)
     for i, c in enumerate(costs):
-        is_efficient[i] = np.all(np.any(costs[:i]>c, axis=1)) and np.all(np.any(costs[i+1:]>c, axis=1))
+        is_efficient[i] = np.all(np.any(costs[:i]<c, axis=1)) and np.all(np.any(costs[i+1:]<c, axis=1))
     return is_efficient
 
 # test
