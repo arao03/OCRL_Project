@@ -1,0 +1,3 @@
+[submodule "src/HypothesisMap"]
+	path = src/HypothesisMap
+	url = https://github.com/abreit001/HypothesisMap.git
