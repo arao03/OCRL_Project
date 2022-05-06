@@ -55,9 +55,10 @@ def run_threads(start_map, stop_map, num_threads):
     agent.generatorIndex = 0
     agent.mapSplitIndex = 0
 
-    run_simulations((SimulationData([m1,m2,m3], testPlanner, testEntityManager),0,0,0,0,0))
+    taskList.append((SimulationData([m1,m2,m3], testPlanner, testEntityManager),0,0,0,0,0))
     #random.shuffle(taskList)
     #print('OK')
+    run_simulations(taskList[0])
 
     #p = Pool(num_threads)
     #p.map(run_simulations, taskList)
