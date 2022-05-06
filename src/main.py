@@ -78,5 +78,5 @@ def exportObservations(simulationData, sim):
     return observationText+"\n"+allstepinfo
 
 def RunSimulation( simulationData ):
-    sim = MapSimulation( simulationData, True, 700, 700)
+    sim = MapSimulation( simulationData, False, 700, 700)
     return exportObservations(simulationData, sim)

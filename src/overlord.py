@@ -44,7 +44,7 @@ def run_threads(start_map, stop_map, num_threads):
     m1 = Map(200, 200, 1, 1, 50, entropy)
     m2 = Map(200, 200, 1, 1, 50, np.loadtxt("../data/new_shade_map.txt")[:200])
     m3 = Map(200, 200, 1, 1, 50, np.loadtxt("../data/new_risk_map.txt")[:200])
-    print(m3._distribution)
+    #print(m3._distribution)
     path_time, no_samples, replan_ratio = 100, 25, 0.5
     #generator = PathGeneratorStraight(path_time)
     generator = PathGeneratorSmooth(0.9, (1, 3), (8, 10), path_time)
@@ -62,7 +62,7 @@ def run_threads(start_map, stop_map, num_threads):
     #p = Pool(num_threads)
     #p.map(run_simulations, taskList)
     #print("gets here")
-    #displayPaths.runDisplay(taskList, 0)
+    displayPaths.runDisplay(taskList, 0)
 
         #displayPaths.runDisplay(taskList, 0)  # taskList, displayType (0 - probability map, 1 - terrain, 2 - both, 3 - info map, 4 - info and probability maps, 5 - coarse reconstructed and probability maps, 6 - gaussians)
 
