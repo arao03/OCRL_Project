@@ -90,10 +90,10 @@ class PrimitivePathPlanner():
 
             #for m in range(self.nMaps):
 
-            if( len(dataArray) > 0):
-                updateMap = gpupdate.GPUpdate(self.initialMaps[m]._distribution, X,Y,np.matrix(dataArray),np.array(stateArray), time, ell, 1)
-                updateMap = np.transpose(updateMap)
-                map.updateMapDistribution( updateMap / updateMap.sum())
+            #if( len(dataArray) > 0):
+            #    updateMap = gpupdate.GPUpdate(self.initialMaps[m]._distribution, X,Y,np.matrix(dataArray),np.array(stateArray), time, ell, 1)
+            #    updateMap = np.transpose(updateMap)
+            #    map.updateMapDistribution( updateMap / updateMap.sum())
 
             self.splitMapPaths = self.generatePrimitivePaths(maps, self._splitMapAgents, self._tries)
 
@@ -142,19 +142,19 @@ class PrimitivePathPlanner():
         splitMapIndex = 0
         agentList = splitMapAgents[0]
         allCosts = []
+        print(tries*len(agentList))
         for trial in range(tries * len(agentList)):
             paths = []
             costs = []
+            for i in range(len(agentList)):
+                currentAgent = agentList[i]
+                generator = self._generators[currentAgent.generatorIndex]
+                inBounds = False
+                path = PathPrimitive([])
+                while inBounds == False:
+                    (path, inBounds) = generator.generateRandomPrimitivePath(maps[0], currentAgent)
+                paths.append(path)
             for m in range(self.nMaps):
-                for i in range(len(agentList)):
-                    currentAgent = agentList[i]
-                    generator = self._generators[currentAgent.generatorIndex]
-                    inBounds = False
-                    path = PathPrimitive([])
-                    while inBounds == False:
-                        (path, inBounds) = generator.generateRandomPrimitivePath(maps[m], currentAgent)
-                    paths.append(path)
-
                 infoMap = self.generateInfoMapFromPrimitivePaths(self.initialMaps[m], 5, agentList, paths)
                 if m == 2:
                     cost = mathlib.calcBinary(maps[m], paths, infoMap)
@@ -184,7 +184,7 @@ class PrimitivePathPlanner():
 
         bestSplitMapPaths[splitMapIndex] = chosenPath
 
-        return np.array(bestSplitMapPaths)
+        return np.array([chosenPath])#(bestSplitMapPaths)
 
 
 

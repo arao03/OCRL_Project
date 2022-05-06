@@ -62,7 +62,7 @@ def run_threads(start_map, stop_map, num_threads):
     p = Pool(num_threads)
     p.map(run_simulations, taskList)
     print("gets here")
-    displayPaths.runDisplay(taskList, 0)
+    #displayPaths.runDisplay(taskList, 0)
 
         #displayPaths.runDisplay(taskList, 0)  # taskList, displayType (0 - probability map, 1 - terrain, 2 - both, 3 - info map, 4 - info and probability maps, 5 - coarse reconstructed and probability maps, 6 - gaussians)
 
