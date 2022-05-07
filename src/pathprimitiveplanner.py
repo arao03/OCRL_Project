@@ -12,6 +12,12 @@ import pygame
 import enum
 import gpupdate
 import random
+import copy
+from HypothesisMap.hypo_map.hsi import HSI
+from HypothesisMap.hypo_map.model import HypothesisMap
+from HypothesisMap.hypo_map.classifier import Classifier
+from HypothesisMap.classes.classifiers import DCDM
+import matplotlib.pyplot as plt
 
 class PrimitivePathPlanner():
 
@@ -28,6 +34,99 @@ class PrimitivePathPlanner():
         self.infoMaps = [[],[], []]
         self.initialMaps = initialMaps
         self.nMaps = nMaps
+
+        ############ Instantiate Hypothesis Map ############
+        coder = 'vae'
+        n_dim = 6
+        threshold = 0.0
+        classes_ = np.array([0,3,4])
+        datadir = 'HypothesisMap/datadir/Cuprite/'
+        i_lim, j_lim = [1070,1270], [1550,1750]
+
+        ######## Hyperspectral Cube ########
+
+        hsi_params = dict(
+            filename = datadir + 'aster/' +'aviris_aster_cube_norm.npy',
+            wavelengths = np.load(datadir + 'aster/' + 'aster_wavelengths.npy'),
+            rgb_filename = datadir + 'aviris/' + 'aviris_rgb.npy',
+            valid_filename = None,
+            dem_filename = datadir + 'terrain/' + 'cuprite_dem_aster.npy',
+            slope_filename = datadir + 'terrain/' + 'cuprite_slope_both_central.npy',
+            classes_filename = None,
+            H = np.load(datadir + 'coordinates/' + 'H_gps2pix.npy'), # maps from pixels to lat, lon
+            resolution = 3.7, spatial_factor = 4, spectral_factor = 1,
+            i_lim = i_lim, j_lim = j_lim, k_lim = None,
+            norm = 'min-max',
+            valid_func = None,
+            interpolate = True)
+
+        self.aster = HSI(**hsi_params)
+
+        aviris_params = copy.deepcopy(hsi_params)
+        aviris_params['filename'] = datadir  + 'aviris/' + 'aviris_cube_2um_norm.npy'
+        aviris_params['wavelengths'] = np.load(datadir + 'aviris/' + 'aviris_wavelengths_2um.npy')
+        aviris_params['norm'] = 'min-max'
+        aviris_params['classes_filename'] = None
+        aviris_params['k_lim'] = [1,79]
+
+        self.aviris = HSI(**aviris_params)
+
+        prism_params = copy.deepcopy(aviris_params)
+        prism_params['spatial_factor'] = 1
+
+        self.prism = HSI(**prism_params)
+
+        ######## Gaussian Process ########
+
+        gp_params = dict(
+            dimx = self.aster.bands, dimy = n_dim, mult = True, prior = False, spatial = True, spatial_dim = 2, 
+            stationary = True, kernel = 'RBF', n_opt = True, p_opt = True, l_opt = True,
+            noise_std = 0.082541, p = 1.0, length_scale = np.array([2.02243809e+04, 4.57488270e-01]),
+            stationary_weight = 1.0, length_split = [2,self.aster.bands],
+            bounds = (1e-3,1e5), optimizer = 'L-BFGS-B', n_restarts_optimizer=100)
+        dcgm_params = None
+
+        ######## Coder ########
+
+        if coder == 'pca':
+            ### PCA ###
+            coder_params = dict(
+                model = 'pca',
+                dim_in = 80,
+                dim_high = 80,
+                dim_low = 6,
+                model_file = datadir + 'coders/' + 'aviris_2um_80_PCA_norm.pkl',
+                wv_high = np.load(datadir + 'aviris/' + 'aviris_wavelengths_2um.npy'),
+                wv_low = np.load(datadir + 'aviris/' + 'aviris_wavelengths_2um.npy'),
+                norm = None,
+                scale = False)
+        else:
+            ### VAE ###
+            coder_params = dict(
+                model = 'ae',
+                dim_in = 78,
+                dim_high = 78,
+                dim_low = 6,
+                encoder_file = datadir + 'coders/' + 'ae_6_norm_encoder.best.h5',
+                decoder_file = datadir + 'coders/' + 'ae_6_norm_decoder.best.h5',
+                wv_high = np.load(datadir + 'coders/' + 'coder_wavelengths.npy'),
+                wv_low = np.load(datadir + 'coders/' + 'coder_wavelengths.npy'),
+                norm = None)
+
+        ######## Classifier ########
+
+        class_params = dict(
+            n_classes = 6,
+            model = datadir + 'classifiers/' + 'lr.pkl',
+            classes = ['Alunite', 'Buddingtonite', 'Calcite', 'Opal', 'Kaolinite', 'Micas'],
+            n_samples = 100)
+
+        cl = Classifier(**class_params)
+        self.aviris.classes = self.aviris.vector2cube(cl.predict_proba(self.aviris.cube2vector(self.aviris.cube)))
+        self.prism.classes = self.prism.vector2cube(cl.predict_proba(self.prism.cube2vector(self.prism.cube)))
+
+        ######## Hypothesis Map ########
+        self.hypothesis_map = HypothesisMap(hsi_params,gp_params,coder_params=coder_params,dcgm_params=dcgm_params,class_params=class_params)
 
     def pareto_choices(self, costs):
         """
@@ -79,37 +178,57 @@ class PrimitivePathPlanner():
             dataArray.append(data)
             stateArray.append(state)
 
-        for m in range(self.nMaps):
-            map = maps[m]
-            nx = (map.sizeX - 1) * map.dX
-            ny = (map.sizeY - 1) * map.dY
-            x = np.linspace(0, nx, map.sizeX)
-            y = np.linspace(0, ny, map.sizeY)
-            X, Y = np.meshgrid(x, y)
-            ell = np.array([5, 5, 5])
+        # for m in range(self.nMaps):
+        # map = maps[m]
+        # nx = (map.sizeX - 1) * map.dX
+        # ny = (map.sizeY - 1) * map.dY
+        # x = np.linspace(0, nx, map.sizeX)
+        # y = np.linspace(0, ny, map.sizeY)
+        # X, Y = np.meshgrid(x, y)
+        # ell = np.array([5, 5, 5])
 
-            #for m in range(self.nMaps):
+        #for m in range(self.nMaps):
 
-            #if( len(dataArray) > 0):
-            #    updateMap = gpupdate.GPUpdate(self.initialMaps[m]._distribution, X,Y,np.matrix(dataArray),np.array(stateArray), time, ell, 1)
-            #    updateMap = np.transpose(updateMap)
-            #    map.updateMapDistribution( updateMap / updateMap.sum())
+        #if( len(dataArray) > 0):
+        #    updateMap = gpupdate.GPUpdate(self.initialMaps[m]._distribution, X,Y,np.matrix(dataArray),np.array(stateArray), time, ell, 1)
+        #    updateMap = np.transpose(updateMap)
+        #    map.updateMapDistribution( updateMap / updateMap.sum())
 
-            self.splitMapPaths = self.generatePrimitivePaths(maps, self._splitMapAgents, self._tries)
+        self.splitMapPaths = self.generatePrimitivePaths(maps, self._splitMapAgents, self._tries)
 
-            for splitMapIndex in range(len(self._splitMapAgents)):
-                agentList = self._splitMapAgents[splitMapIndex]
-                for i in range(len(agentList)):
-                    agentList[i].setNewPath(self.splitMapPaths[splitMapIndex][i])
+        for splitMapIndex in range(len(self._splitMapAgents)):
+            agentList = self._splitMapAgents[splitMapIndex]
+            for i in range(len(agentList)):
+                agentList[i].setNewPath(self.splitMapPaths[splitMapIndex][i])
 
-            self.infoMaps[m] = Map(map.sizeX, map.sizeY)
-            self.infoMaps[m].updateMapDistribution( self.generateCurrentInfoMap(map, 1.5) )
+        print("UPDATING HYPOTHESIS MAP")
+        # Update hypothesis map and entropy map
+        (i0, j0) = self.splitMapPaths[0][0].getPointAtTime(-1)
+        lat, lon = self.aviris.ij2gps(np.floor(i0/4), np.floor(j0/4))
+        spectra = self.aviris.gps2spectra(lat,lon)
+        self.hypothesis_map.update(spectra,lat,lon)
+
+        # Put the new entropy map into the correct format
+        entropy = list(self.hypothesis_map.entropy())[1]
+        for i in range(0, len(entropy)):
+            for j in range(0, len(entropy[0])):
+                if np.isnan(entropy[i][j]):
+                    entropy[i][j] = 0
+        entropy_upsampled = entropy.repeat(4, axis=0).repeat(4, axis=1)
+        self.initialMaps[0] = Map(200, 200, 1, 1, 50, entropy_upsampled)
+        plt.scatter(i0, j0, c='red', marker='.')
+        plt.imshow(entropy_upsampled)
+        plt.pause(1)
+
+        # self.infoMaps[m] = Map(map.sizeX, map.sizeY)
+        # self.infoMaps[m].updateMapDistribution( self.generateCurrentInfoMap(map, 1.5) )
 
 
     def tick(self, deltaTime, world):
         prePlanTime = pygame.time.get_ticks()
         self._replanTimeCurrent += deltaTime
         if( self._replanTimeCurrent >= self._replanTime):
+            print("REPLANNING")
             self.replanPaths(world.maps, world.getTimePassed())
             self._replanTimeCurrent = 0
         postPlanTime = pygame.time.get_ticks()
@@ -173,7 +292,6 @@ class PrimitivePathPlanner():
         idx = random.randrange(paretoNum)
 
         chosenPath = allPaths[idx]
-
         return np.array([chosenPath])
 
 
