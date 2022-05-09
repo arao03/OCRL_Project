@@ -79,31 +79,15 @@ class PrimitivePathPlanner():
             dataArray.append(data)
             stateArray.append(state)
 
-        for m in range(self.nMaps):
-            map = maps[m]
-            nx = (map.sizeX - 1) * map.dX
-            ny = (map.sizeY - 1) * map.dY
-            x = np.linspace(0, nx, map.sizeX)
-            y = np.linspace(0, ny, map.sizeY)
-            X, Y = np.meshgrid(x, y)
-            ell = np.array([5, 5, 5])
+        self.splitMapPaths = self.generatePrimitivePaths(maps, self._splitMapAgents, self._tries)
 
-            #for m in range(self.nMaps):
+        for splitMapIndex in range(len(self._splitMapAgents)):
+            agentList = self._splitMapAgents[splitMapIndex]
+            for i in range(len(agentList)):
+                agentList[i].setNewPath(self.splitMapPaths[splitMapIndex][i])
 
-            #if( len(dataArray) > 0):
-            #    updateMap = gpupdate.GPUpdate(self.initialMaps[m]._distribution, X,Y,np.matrix(dataArray),np.array(stateArray), time, ell, 1)
-            #    updateMap = np.transpose(updateMap)
-            #    map.updateMapDistribution( updateMap / updateMap.sum())
-
-            self.splitMapPaths = self.generatePrimitivePaths(maps, self._splitMapAgents, self._tries)
-
-            for splitMapIndex in range(len(self._splitMapAgents)):
-                agentList = self._splitMapAgents[splitMapIndex]
-                for i in range(len(agentList)):
-                    agentList[i].setNewPath(self.splitMapPaths[splitMapIndex][i])
-
-            self.infoMaps[m] = Map(map.sizeX, map.sizeY)
-            self.infoMaps[m].updateMapDistribution( self.generateCurrentInfoMap(map, 1.5) )
+            #self.infoMaps[m] = Map(map.sizeX, map.sizeY)
+            #self.infoMaps[m].updateMapDistribution( self.generateCurrentInfoMap(map, 1.5) )
 
 
     def tick(self, deltaTime, world):
@@ -134,7 +118,7 @@ class PrimitivePathPlanner():
                                    (we pick best one using ergodicity calculation)
         '''
 
-
+        #print("hello!")
         allPaths = []
         agentList = splitMapAgents[0]
         allCosts = []
@@ -171,8 +155,13 @@ class PrimitivePathPlanner():
         if paretoNum == 0:
             paretoNum = 1
         idx = random.randrange(paretoNum)
+        #idx = random.randrange(len(allPaths))
 
+        allPaths = allPaths[pareto == True]
         chosenPath = allPaths[idx]
+        #print(chosenPath)
+        #infoMap = self.generateInfoMapFromPrimitivePaths(self.initialMaps[m], 5, agentList, chosenPath)
+        #print(mathlib.calcErgodicity(maps[0], infoMap))
 
         return np.array([chosenPath])
 
@@ -225,6 +214,7 @@ class PrimitivePathPlanner():
         pTime = 0
         pIndex = 0
         samples = 0;
+        #print(len(path.primitiveList))
 
         while( pIndex < len(path.primitiveList) ):
             primitive = path.primitiveList[pIndex]

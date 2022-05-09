@@ -30,21 +30,11 @@ def run_simulations(next):
 
 
 def run_threads(start_map, stop_map, num_threads):
-    #for i in range(start_map, stop_map): #33 maps
     taskList = []
-        #print('Adding map {} to the queue...'.format(i), end='')
-        #if i < 13:
-        #    m = Map(100, 100, 1, 1, 50, np.loadtxt("saved data maps/notrand" + str(i + 1)+".txt")[:100])
-        #else:
-        #    m = Map(100, 100, 1, 1, 50, np.loadtxt("saved data maps/rand" + str(i - 12)+".txt")[:100])
-        #import maps
-    #m1 = Map(100, 100, 1, 1, 50, np.loadtxt("saved data maps/notrand1.txt")[:100])
-    #m2 = Map(100, 100, 1, 1, 50, np.loadtxt("saved data maps/Rand9.txt")[:100])
     entropy = np.loadtxt("../data/new_entropy_upsampled.txt")[:200]
     m1 = Map(200, 200, 1, 1, 50, entropy)
     m2 = Map(200, 200, 1, 1, 50, np.loadtxt("../data/new_shade_map.txt")[:200])
     m3 = Map(200, 200, 1, 1, 50, np.loadtxt("../data/new_risk_map.txt")[:200])
-    #print(m3._distribution)
     path_time, no_samples, replan_ratio = 100, 25, 0.5
     #generator = PathGeneratorStraight(path_time)
     generator = PathGeneratorSmooth(0.9, (1, 3), (8, 10), path_time)
@@ -63,7 +53,7 @@ def run_threads(start_map, stop_map, num_threads):
     #p = Pool(num_threads)
     #p.map(run_simulations, taskList)
     #print("gets here")
-    displayPaths.runDisplay(taskList, 0)
+    #displayPaths.runDisplay(taskList, 0)
 
         #displayPaths.runDisplay(taskList, 0)  # taskList, displayType (0 - probability map, 1 - terrain, 2 - both, 3 - info map, 4 - info and probability maps, 5 - coarse reconstructed and probability maps, 6 - gaussians)
 
@@ -84,4 +74,5 @@ if __name__ == "__main__":
         num_threads  = int(sys.argv[3])
 
     print('Starting tests from map {:d} until map {:d} with {:d} threads...'.format(start_map, stop_map, num_threads))
-    run_threads(start_map, stop_map, num_threads)
+    for i in range(50):
+        run_threads(start_map, stop_map, num_threads)

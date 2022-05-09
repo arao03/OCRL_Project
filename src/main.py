@@ -57,22 +57,22 @@ def exportObservations(simulationData, sim):
 
     stepInfo = []
     a = sim.recordedAgentData
-    f = open("data.txt", 'a+')
-    for i in range(len(a)):
-        for j in range(len(a[0])):
-            f.write(str(a[i][j][1][0]) + " ")
-            f.write(str(a[i][j][1][1]) + " ")
-        f.write('-1 ')
-    f.close()
-    f = open("trajectory.txt", 'a+')
+    #f = open("data.txt", 'a+')
+    #for i in range(len(a)):
+    #    for j in range(len(a[0])):
+            #f.write(str(a[i][j][1][0]) + " ")
+            #f.write(str(a[i][j][1][1]) + " ")
+        #f.write('-1 ')
+    #f.close()
+    #f = open("trajectory.txt", 'a+')
     for i in range(0, len(a)):
         agentInfo = []
         for j in range(0, len(a[i])):
             (id,(x,y),z) = a[i][j]
-            f.write(str(x) + " " + str(y) + '\n')
+            #f.write(str(x) + " " + str(y) + '\n')
             agentInfo.append("Step: "+ str(i) + " AgentID: "+str(id)+" Position: ("+str(x)+","+str(y)+") ObservedInfo: " +str(z))
         stepInfo.append("\n".join(agentInfo))
-    f.close()
+    #f.close()
     allstepinfo = "\n".join(stepInfo)
 
     return observationText+"\n"+allstepinfo

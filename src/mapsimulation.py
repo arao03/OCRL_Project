@@ -85,6 +85,7 @@ class MapSimulation:
 
     def generateNewPath(self):
         self.pathPlanner.replanPaths(self.maps, self.getTimePassed())
+        #print(len(self.pathPlanner.getAllPaths()))
 
 
     def getAllEntities(self):
@@ -138,6 +139,8 @@ class MapSimulation:
         '''Main tick function for the simulation. Currently draws map state every frame.
         '''
 
+        #paths = []
+
         drawNotify = True
         spaceReleaseBlock = False
         deltaTime = 0
@@ -166,10 +169,25 @@ class MapSimulation:
                 info = agent.getInfoUnderMap(self.maps[0])
                 tickData.append((agent.id, agent.position, info))
             self.recordedAgentData.append(tickData)
+            #paths.append(self.pathPlanner.getAllPaths())
 
             self.ticksLeft -= 1
             if(self.ticksLeft <= 0):
                 self.running = False
+                #print(paths)
+                #paths = np.array(paths)
+                #infoMap = self.pathPlanner.generateInfoMapFromPrimitivePaths(self.maps[0], 5, self.pathPlanner.getAllAgents(), paths)
+                infoMap = self.pathPlanner.generateInfoMapFromPrimitivePaths(self.maps[0], 5, self.pathPlanner.getAllAgents(), self.pathPlanner.getAllPaths())
+                #print(self.pathPlanner.getAllPaths())
+                f = open("ergodic_vals_multi_entropy.txt", 'a+')
+                f.write(str(mathlib.calcErgodicity(self.maps[0],infoMap)) + "\n")
+                f.close()
+                f = open("ergodic_vals_multi_shade.txt", 'a+')
+                f.write(str(mathlib.calcErgodicity(self.maps[1], infoMap)) + "\n")
+                f.close()
+                f = open("ergodic_vals_multi_risk.txt", 'a+')
+                f.write(str(mathlib.calcErgodicity(self.maps[2], infoMap)) + "\n")
+                f.close()
             # if pygame.time.get_ticks()>20000 :
             #    self.running = False
 
