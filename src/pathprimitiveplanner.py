@@ -34,6 +34,8 @@ class PrimitivePathPlanner():
         self.infoMaps = [[],[], []]
         self.initialMaps = initialMaps
         self.nMaps = nMaps
+        self.num_updates = 0
+        self.entropy_min = np.inf
 
         ############ Instantiate Hypothesis Map ############
         coder = 'vae'
@@ -202,6 +204,7 @@ class PrimitivePathPlanner():
                 agentList[i].setNewPath(self.splitMapPaths[splitMapIndex][i])
 
         print("UPDATING HYPOTHESIS MAP")
+        self.num_updates += 1
         # Update hypothesis map and entropy map
         (i0, j0) = self.splitMapPaths[0][0].getPointAtTime(-1)
         lat, lon = self.aviris.ij2gps(np.floor(i0/4), np.floor(j0/4))
@@ -209,16 +212,31 @@ class PrimitivePathPlanner():
         self.hypothesis_map.update(spectra,lat,lon)
 
         # Put the new entropy map into the correct format
-        entropy = list(self.hypothesis_map.entropy())[1]
-        for i in range(0, len(entropy)):
-            for j in range(0, len(entropy[0])):
-                if np.isnan(entropy[i][j]):
-                    entropy[i][j] = 0
-        entropy_upsampled = entropy.repeat(4, axis=0).repeat(4, axis=1)
-        self.initialMaps[0] = Map(200, 200, 1, 1, 50, entropy_upsampled)
+        entropy = list(self.hypothesis_map.entropy())
+        entropy.reverse()
+        entropy_map = entropy[0]
+
+        # Find the minimum of the new entropy map and make the edges this minimum value
+        # instead of NaNs
+        self.entropy_min = np.nanmin([self.entropy_min,np.nanmin(entropy_map)])
+        for i in range(0, len(entropy_map)):
+            for j in range(0, len(entropy_map[0])):
+                if np.isnan(entropy_map[i][j]):
+                    entropy_map[i][j] = self.entropy_min
+        
+        # Upsample the entropy map to fit the dimensions of the other maps
+        entropy_upsampled = entropy_map.repeat(4, axis=0).repeat(4, axis=1)
+
+        # Update the entropy map for this object
+        self.initialMaps[0] = Map(200, 200, 1, 1, 50, np.copy(entropy_upsampled))
+
+        # Plot new map
         plt.scatter(i0, j0, c='red', marker='.')
-        plt.imshow(entropy_upsampled)
+        plt.annotate(str(self.num_updates), (i0, j0))
+        entropy_img = plt.imshow(entropy_upsampled)
+        colorbar_vis = plt.colorbar(entropy_img)
         plt.pause(1)
+        colorbar_vis.remove()
 
         # self.infoMaps[m] = Map(map.sizeX, map.sizeY)
         # self.infoMaps[m].updateMapDistribution( self.generateCurrentInfoMap(map, 1.5) )
@@ -290,6 +308,8 @@ class PrimitivePathPlanner():
         if paretoNum == 0:
             paretoNum = 1
         idx = random.randrange(paretoNum)
+
+        allPaths = allPaths[pareto == True]
 
         chosenPath = allPaths[idx]
         return np.array([chosenPath])
