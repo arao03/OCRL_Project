@@ -35,7 +35,10 @@ class PrimitivePathPlanner():
         self.initialMaps = initialMaps
         self.nMaps = nMaps
         self.num_updates = 0
-        self.entropy_min = np.inf
+        self.entropyMaps = []
+        self.endpoints = []
+
+        self.entropyMaps.append(Map(200, 200, 1, 1, 50, initialMaps[0]._distribution.copy()))
 
         ############ Instantiate Hypothesis Map ############
         coder = 'vae'
@@ -207,6 +210,7 @@ class PrimitivePathPlanner():
         self.num_updates += 1
         # Update hypothesis map and entropy map
         (i0, j0) = self.splitMapPaths[0][0].getPointAtTime(-1)
+        self.endpoints.append(np.array([i0, j0]))
         lat, lon = self.aviris.ij2gps(np.floor(i0/4), np.floor(j0/4))
         spectra = self.aviris.gps2spectra(lat,lon)
         self.hypothesis_map.update(spectra,lat,lon)
@@ -218,17 +222,19 @@ class PrimitivePathPlanner():
 
         # Find the minimum of the new entropy map and make the edges this minimum value
         # instead of NaNs
-        self.entropy_min = np.nanmin([self.entropy_min,np.nanmin(entropy_map)])
+        entropy_min = np.nanmin(entropy_map)
         for i in range(0, len(entropy_map)):
             for j in range(0, len(entropy_map[0])):
                 if np.isnan(entropy_map[i][j]):
-                    entropy_map[i][j] = self.entropy_min
+                    entropy_map[i][j] = entropy_min
         
         # Upsample the entropy map to fit the dimensions of the other maps
         entropy_upsampled = entropy_map.repeat(4, axis=0).repeat(4, axis=1)
 
         # Update the entropy map for this object
-        self.initialMaps[0] = Map(200, 200, 1, 1, 50, np.copy(entropy_upsampled))
+        # self.initialMaps[0] = Map(200, 200, 1, 1, 50, np.copy(entropy_upsampled))
+        self.initialMaps[0].updateMapDistribution(entropy_upsampled.copy())
+        self.entropyMaps.append(Map(200, 200, 1, 1, 50, entropy_upsampled.copy()))
 
         # Plot new map
         plt.scatter(i0, j0, c='red', marker='.')

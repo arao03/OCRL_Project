@@ -143,7 +143,7 @@ def displayPathsonProbability(next, live):
     (a,i,j,k,l,o) = next
     fig, (ax1, ax2, ax3) = plt.subplots(1,3)
     ax1.set_aspect('equal')
-    ax1.imshow(a.maps[0]._distribution, interpolation='nearest')
+    ax1.imshow(a.pathPlanner.entropyMaps[0]._distribution, interpolation='nearest')
     ax2.set_aspect('equal')
     ax2.imshow(a.maps[1]._distribution, interpolation='nearest')
     ax3.set_aspect('equal')
@@ -162,10 +162,11 @@ def displayPathsonProbability(next, live):
         else:
             points[j].append(s[i])
     print(len(points))
+    endpoint_idx = 0
     displaypoints = [[[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]], [[],[]]]
     for pointlist in points:
         ax1.clear()
-        ax1.imshow(a.maps[0]._distribution, interpolation='nearest')
+        ax1.imshow(a.pathPlanner.entropyMaps[endpoint_idx]._distribution, interpolation='nearest')
         ax2.clear()
         ax2.imshow(a.maps[1]._distribution, interpolation='nearest')
         ax3.clear()
@@ -177,6 +178,7 @@ def displayPathsonProbability(next, live):
             displaypoints[i//2][0].append(pointlist[i])
             displaypoints[i//2][1].append(pointlist[i+1])
         for i in range(10):
+            endpoint = a.pathPlanner.endpoints[endpoint_idx]
             ax1.plot(displaypoints[i][0], displaypoints[i][1], 'r', linewidth=1)
             ax2.plot(displaypoints[i][0], displaypoints[i][1], 'r', linewidth=1)
             ax3.plot(displaypoints[i][0], displaypoints[i][1], 'r', linewidth=1)
@@ -184,6 +186,9 @@ def displayPathsonProbability(next, live):
             ax2.title.set_text('Shade')
             ax3.title.set_text('Risk')
             if len(displaypoints[i][0]) > 0:
+                if np.abs(endpoint[0] - displaypoints[i][0][-1]) < 3 and np.abs(endpoint[1] - displaypoints[i][1][-1]) < 3:
+                    print("FOUND ENDPOINT")
+                    endpoint_idx += 1
                 circ1 = Circle((displaypoints[i][0][-1],displaypoints[i][1][-1]),1,ec='red',fc='red')
                 circ2 = Circle((displaypoints[i][0][-1], displaypoints[i][1][-1]), 1, ec='red', fc='red')
                 circ3 = Circle((displaypoints[i][0][-1], displaypoints[i][1][-1]), 1, ec='red', fc='red')
