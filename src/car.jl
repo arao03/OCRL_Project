@@ -22,9 +22,9 @@ Add a simple model of the bicycle model to the MeshCat visualizer `vis`
 function set_mesh!(vis, model::RobotZoo.BicycleModel)
     L, lr = model.L,  model.lr
     lf = L - lr
-    ww = 0.23     # wheel width (m)
-    r = 0.3       # wheel radius (m)
-    bw = 0.1      # chassis width (m)
+    ww = 0.023     # wheel width (m)
+    r = 0.03       # wheel radius (m)
+    bw = 0.01      # chassis width (m)
     wheel = Cylinder(Point3f0(0,-ww/2,0), Point3f0(0,ww/2,0), Float32(r))
     body = Rect3D(Vec(0,-bw/2,-bw/2), Vec(L,bw,bw))
     setobject!(vis["geom"], Triad()) 
